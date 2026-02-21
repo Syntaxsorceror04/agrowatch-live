@@ -23,8 +23,10 @@ import {
   type Alert,
 } from "@/data/mockData";
 import IndiaHeatMap from "@/components/agency/IndiaHeatMap";
+import AlertDetailDialog from "@/components/agency/AlertDetailDialog";
 import Navbar from "@/components/Navbar";
 import { toast } from "sonner";
+import type { MapHotspot } from "@/data/mockData";
 
 const urgencyColors: Record<Urgency, string> = {
   high: "badge-urgency-high",
@@ -43,6 +45,9 @@ const AgencyDashboard = () => {
   const [teamAssignments, setTeamAssignments] = useState<
     Record<string, string>
   >({ "ALT-001": "Alpha Response Unit" });
+  const [selectedAlert, setSelectedAlert] = useState<Alert | null>(null);
+  const [selectedHotspot, setSelectedHotspot] = useState<MapHotspot | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
 
   const filtered = allAlerts.filter((a) => {
     if (urgencyFilter !== "all" && a.urgency !== urgencyFilter) return false;
@@ -183,7 +188,13 @@ const AgencyDashboard = () => {
                 satelliteOverlay ? "bg-earth/5 ring-1 ring-earth/20" : ""
               }`}
             >
-              <IndiaHeatMap />
+              <IndiaHeatMap
+                onHotspotClick={(hotspot) => {
+                  setSelectedHotspot(hotspot);
+                  setSelectedAlert(null);
+                  setDetailOpen(true);
+                }}
+              />
             </div>
           </motion.div>
 
@@ -245,7 +256,14 @@ const AgencyDashboard = () => {
                       dispatchedAlerts.has(alert.id) ? "ring-1 ring-success/30" : ""
                     }`}
                   >
-                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
+                    <div
+                      className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 cursor-pointer"
+                      onClick={() => {
+                        setSelectedAlert(alert);
+                        setSelectedHotspot(null);
+                        setDetailOpen(true);
+                      }}
+                    >
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <span className={urgencyColors[alert.urgency]}>
@@ -313,6 +331,16 @@ const AgencyDashboard = () => {
             </div>
           </div>
         </div>
+
+        {/* Alert Detail Dialog */}
+        <AlertDetailDialog
+          alert={selectedAlert}
+          hotspot={selectedHotspot}
+          open={detailOpen}
+          onOpenChange={setDetailOpen}
+          onDispatch={handleDispatch}
+          dispatchedAlerts={dispatchedAlerts}
+        />
       </main>
     </div>
   );
