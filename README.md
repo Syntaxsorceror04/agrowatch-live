@@ -1,4 +1,3 @@
-For GitHub, shorter is better. You can use this:
 
 # 🌱 AgroEye
 
