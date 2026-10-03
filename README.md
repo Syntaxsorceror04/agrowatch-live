@@ -31,4 +31,3 @@ AgroEye is an AI-powered invasive species monitoring platform that combines citi
 
 
 
-If you send me your GitHub repo link and deployed URL, I'll format the README with the exact links included.
